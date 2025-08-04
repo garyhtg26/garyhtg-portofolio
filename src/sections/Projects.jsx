@@ -20,7 +20,7 @@ const projectData = [
     image: '/images/grid2.png',
     tech: ['React js', 'Tableau', 'Node.js'],
     details: 'Ruang Data Jasindo serves as the central hub for Jasindo’s internal resources. I led the development, starting with system design and defining brand guidelines, integrating logos and their meanings. Using React, TailwindCSS, and Node.js, I built a responsive platform with intuitive navigation and a CMS for real-time updates, ensuring efficient resource management and accessibility.',
-    gallery: ['/images/2a.png', '/images/2b.png'],
+    gallery: ['/images/2a.png', '/images/2b.png','/images/2c.png'],
   }
 
 ];
