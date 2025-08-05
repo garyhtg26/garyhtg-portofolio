@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 
 const SPRITES = {
   running: {
-    url: '/sprites/holly/Running.png',
+    url: '/sprites/holly/running.png',
     frames: 6,
   },
   idle: {
