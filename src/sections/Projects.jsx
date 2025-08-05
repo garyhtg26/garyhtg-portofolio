@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
 
 const projectData = [
   {
@@ -13,25 +13,25 @@ const projectData = [
     details: 'Jasmin offers a seamless experience for managing policies, submitting claims, and accessing services. Developed using React Native and JavaScript, I contributed to system design, UI/UX, and development, while implementing a CI/CD pipeline for efficient testing and deployment.',
     gallery: ['/images/1a.png', '/images/1b.png', '/images/1c.png'],
   },
-
   {
     title: 'Ruang Data Jasindo',
     desc: 'Ruang Data Jasindo is an integrated data hub platform developed to centralize and organize all Jasindo’s resources.',
     image: '/images/grid2.png',
     tech: ['React js', 'Tableau', 'Node.js'],
     details: 'Ruang Data Jasindo serves as the central hub for Jasindo’s internal resources. I led the development, starting with system design and defining brand guidelines, integrating logos and their meanings. Using React, TailwindCSS, and Node.js, I built a responsive platform with intuitive navigation and a CMS for real-time updates, ensuring efficient resource management and accessibility.',
-    gallery: ['/images/2a.png', '/images/2b.png','/images/2c.png'],
+    gallery: ['/images/2a.png', '/images/2b.png', '/images/2c.png'],
   }
-
 ];
 
 export default function Projects() {
   const [activeProject, setActiveProject] = useState(null);
   const [slideIndex, setSlideIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
 
   const openModal = (project) => {
     setActiveProject(project);
     setSlideIndex(0);
+    setDirection(0);
   };
 
   const closeModal = () => {
@@ -91,31 +91,80 @@ export default function Projects() {
           >
             <motion.div
               onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 text-white max-w-4xl w-full rounded-xl overflow-hidden shadow-xl"
+              className="relative bg-gray-900 text-white w-full max-w-4xl max-h-[95vh] rounded-xl overflow-hidden shadow-xl flex flex-col"
               initial={{ scale: 0.7, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.7, opacity: 0 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             >
-              {/* Image Carousel */}
-              <div className="relative w-full h-[500px] bg-black">
-                <img
-                  src={activeProject.gallery[slideIndex]}
-                  alt="project slide"
-                  className="w-full h-full object-cover"
-                />
+              {/* Close Button */}
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 z-50 p-2 bg-black/60 hover:bg-black/80 text-white rounded-full"
+              >
+                <FiX className="text-xl" />
+              </button>
 
-                {/* Carousel Controls */}
-                {activeProject.gallery.length > 1 && (
-                  <>
-                    {/* Left */}
-                    <button
-                      onClick={() =>
+              {/* Image Carousel */}
+              <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] bg-black overflow-hidden">
+                <AnimatePresence custom={direction} mode="sync">
+                  <motion.img
+                    key={slideIndex}
+                    src={activeProject.gallery[slideIndex]}
+                    alt="project slide"
+                    custom={direction}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    variants={{
+                      enter: (dir) => ({
+                        x: dir > 0 ? 300 : -300,
+                        opacity: 0,
+                      }),
+                      center: {
+                        x: 0,
+                        opacity: 1,
+                      },
+                      exit: (dir) => ({
+                        x: dir > 0 ? -300 : 300,
+                        opacity: 0,
+                      }),
+                    }}
+                    transition={{
+                      x: { type: 'spring', stiffness: 300, damping: 30 },
+                      opacity: { duration: 0.15 },
+                    }}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={1}
+                    onDragEnd={(e, { offset, velocity }) => {
+                      const swipe = Math.abs(offset.x) * velocity.x;
+                      if (swipe < -500) {
+                        setDirection(1);
+                        setSlideIndex((slideIndex + 1) % activeProject.gallery.length);
+                      } else if (swipe > 500) {
+                        setDirection(-1);
                         setSlideIndex(
                           (slideIndex - 1 + activeProject.gallery.length) %
                           activeProject.gallery.length
-                        )
+                        );
                       }
+                    }}
+                    className="w-full h-full object-cover absolute top-0 left-0"
+                  />
+                </AnimatePresence>
+
+                {/* Controls */}
+                {activeProject.gallery.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => {
+                        setDirection(-1);
+                        setSlideIndex(
+                          (slideIndex - 1 + activeProject.gallery.length) %
+                          activeProject.gallery.length
+                        );
+                      }}
                       className="absolute left-4 top-1/2 -translate-y-1/2 
                    bg-black/70 text-white border border-white/30 
                    p-3 rounded-full hover:bg-black/90 
@@ -124,11 +173,11 @@ export default function Projects() {
                       <FiChevronLeft className="text-2xl" />
                     </button>
 
-                    {/* Right */}
                     <button
-                      onClick={() =>
-                        setSlideIndex((slideIndex + 1) % activeProject.gallery.length)
-                      }
+                      onClick={() => {
+                        setDirection(1);
+                        setSlideIndex((slideIndex + 1) % activeProject.gallery.length);
+                      }}
                       className="absolute right-4 top-1/2 -translate-y-1/2 
                    bg-black/70 text-white border border-white/30 
                    p-3 rounded-full hover:bg-black/90 
@@ -137,13 +186,15 @@ export default function Projects() {
                       <FiChevronRight className="text-2xl" />
                     </button>
 
-                    {/* Dots */}
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                       {activeProject.gallery.map((_, idx) => (
                         <button
                           key={idx}
-                          onClick={() => setSlideIndex(idx)}
-                          className={`w-3 h-3 rounded-full border border-white/30 ${idx === slideIndex ? 'bg-black/90' : 'bg-black/30'
+                          onClick={() => {
+                            setDirection(idx > slideIndex ? 1 : -1);
+                            setSlideIndex(idx);
+                          }}
+                          className={`w-3 h-3 rounded-full border border-white/30 ${idx === slideIndex ? 'bg-white' : 'bg-white/30'
                             }`}
                         />
                       ))}
@@ -152,9 +203,8 @@ export default function Projects() {
                 )}
               </div>
 
-
-              {/* Project Details */}
-              <div className="p-6">
+              {/* Project Info */}
+              <div className="p-6 overflow-y-auto max-h-[35vh] sm:max-h-[45vh]">
                 <h3 className="text-2xl font-bold mb-2">{activeProject.title}</h3>
                 <p className="text-sm text-gray-300 mb-4">{activeProject.details}</p>
                 <div className="flex flex-wrap gap-2">
