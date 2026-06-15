@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import HollyCharacter from "@/components/HollyCharacter";
-import LilwizCharacter from '@/components/LilwizCharacter';
+import SpriteCharacter from '@/components/SpriteCharacter';
+import { CHARACTERS } from '@/components/sprites';
 
 export default function Hero() {
   const textWrapperRef = useRef(null);
@@ -76,10 +76,16 @@ export default function Hero() {
         A passionate frontend developer who loves crafting engaging web and mobile experiences with animation and UI/UX.
       </motion.p>
 
-      {/* Characters */}
-      <div className="w-full relative mt-12 h-[64px]">
-        <HollyCharacter />
-        <LilwizCharacter />
+      {/* Characters — self-animating pixel sprites (walk + idle + special action) */}
+      <div className="w-full relative mt-12 h-[180px]">
+       {/* <SpriteCharacter character={CHARACTERS.gordon} /> */}
+        <SpriteCharacter character={CHARACTERS.diego} />
+        <SpriteCharacter character={CHARACTERS.grizzly} />
+        <SpriteCharacter character={CHARACTERS.schoolgirl} />
+        <SpriteCharacter character={CHARACTERS.charizard} />
+        <SpriteCharacter character={CHARACTERS.holly} />
+        <SpriteCharacter character={CHARACTERS.lilwiz} />
+        
       </div>
     </section>
   );
